@@ -1,0 +1,16 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local runtime data. Keep personal collection data out of public commits.
+data/*.sqlite
+data/*.sqlite-*
+
+# Generated image cache. Rebuild with `python3 download_catalog_images.py`.
+static/images/catalog/
+
+# Local exports/backups.
+numismatics-*.json
+coin-collection-*.json
