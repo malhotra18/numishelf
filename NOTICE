@@ -1,0 +1,28 @@
+Numishelf
+Copyright (c) 2026 Aman Malhotra
+
+The application source code is licensed under the MIT License. See LICENSE.
+
+Catalogue data, source text, and media imported or downloaded by Numishelf may
+come from third-party sources and are not relicensed by this project.
+
+Known source families:
+
+- U.S. Mint pages and programme information:
+  https://www.usmint.gov/
+
+- Wikipedia text and table-derived data:
+  https://www.wikipedia.org/
+
+- Wikimedia Commons media and thumbnails:
+  https://commons.wikimedia.org/
+
+Wikipedia text is generally licensed under Creative Commons
+Attribution-ShareAlike 4.0 International and may also be available under the
+GNU Free Documentation License. Wikimedia Commons media files have individual
+licenses; many require attribution and some require share-alike treatment.
+
+Do not assume the generated SQLite database or downloaded image cache is MIT
+licensed. If you redistribute generated catalogue data or images, review and
+comply with the license and attribution requirements for the underlying source
+pages and media files.
