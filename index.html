@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Numismatics Collection</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="coin-mark">$</div>
+          <div>
+            <h1>Coin Catalogue</h1>
+            <p>U.S. Mint collection tracker</p>
+          </div>
+        </div>
+
+        <section class="stats" aria-label="Collection summary">
+          <div>
+            <span id="ownedCount">0</span>
+            <small>owned</small>
+          </div>
+          <div>
+            <span id="catalogCount">0</span>
+            <small>catalogued</small>
+          </div>
+          <div>
+            <span id="completionRate">0%</span>
+            <small>complete</small>
+          </div>
+          <div>
+            <span id="totalQuantity">0</span>
+            <small>total coins</small>
+          </div>
+        </section>
+
+        <section class="controls" aria-label="Filters">
+          <label>
+            Search
+            <input id="searchInput" type="search" placeholder="Quarter, Sacagawea, 2026..." />
+          </label>
+
+          <label>
+            Denomination
+            <select id="denominationFilter"></select>
+          </label>
+
+          <label>
+            Program
+            <select id="programFilter"></select>
+          </label>
+
+          <label>
+            Collection
+            <select id="ownedFilter">
+              <option value="all">All coins</option>
+              <option value="owned">Owned</option>
+              <option value="missing">Missing</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="tools" aria-label="Collection tools">
+          <button id="addCustomButton" type="button">Add custom coin</button>
+          <button id="exportButton" type="button">Export backup</button>
+          <label class="import-button">
+            Import backup
+            <input id="importInput" type="file" accept="application/json" />
+          </label>
+        </section>
+      </aside>
+
+      <section class="content">
+        <header class="topbar">
+          <div>
+            <p id="resultCount" class="result-count">0 coins</p>
+            <h2 id="viewTitle">Catalogue</h2>
+          </div>
+          <div class="view-tabs" role="tablist" aria-label="View">
+            <button id="catalogTab" class="active" type="button">Catalogue</button>
+            <button id="collectionTab" type="button">My collection</button>
+            <button id="sourcesTab" type="button">Sources</button>
+          </div>
+        </header>
+
+        <section id="catalogView" class="catalog-grid" aria-live="polite"></section>
+
+        <section id="sourcesView" class="sources-view hidden">
+          <h3>Catalogue scope</h3>
+          <p>
+            This Python app persists data in <code>data/numismatics.sqlite</code>. The built-in catalogue
+            covers U.S. type coins plus major modern U.S. Mint circulating and collectible design programs:
+            State/DC/Territory quarters, America the Beautiful quarters, American Women quarters,
+            2026 Semiquincentennial quarters, Presidential dollars, Native American dollars, and
+            American Innovation dollars through 2026. It also imports the Wikipedia decade tables for
+            U.S. commemorative coins and medals from pre-1900 through the 2020s.
+          </p>
+          <p>
+            Additional market coins can be added from the app or imported from CSV with
+            <code>python3 app.py --import-catalog-csv path/to/catalog.csv</code>. CSV columns:
+            <code>id,name,denomination,years,program,category,description,source,tags</code>.
+          </p>
+          <ul>
+            <li><a href="https://www.usmint.gov/learn/coins-and-medals/circulating-coins" target="_blank" rel="noreferrer">U.S. Mint circulating coins</a></li>
+            <li><a href="https://www.usmint.gov/learn/coins-and-medals/circulating-coins/quarter/america-the-beautiful-quarters" target="_blank" rel="noreferrer">U.S. Mint America the Beautiful quarters</a></li>
+            <li><a href="https://www.usmint.gov/news/inside-the-mint/coin-programs-in-the-circulating-collectible-coin-redesign-act" target="_blank" rel="noreferrer">U.S. Mint Circulating Collectible Coin Redesign Act programs</a></li>
+            <li><a href="https://www.usmint.gov/learn/coins-and-medals/circulating-coins/dollar-coins" target="_blank" rel="noreferrer">U.S. Mint dollar coins</a></li>
+            <li><a href="https://www.usmint.gov/learn/coins-and-medals/collectible-coins/native-american-dollar-coins" target="_blank" rel="noreferrer">U.S. Mint Native American $1 coins</a></li>
+            <li><a href="https://www.usmint.gov/learn/coins-and-medals/collectible-coins/american-innovation-dollar-coins" target="_blank" rel="noreferrer">U.S. Mint American Innovation $1 coins</a></li>
+            <li><a href="https://www.usmint.gov/learn/coins-and-medals/commemorative-coins" target="_blank" rel="noreferrer">U.S. Mint commemorative coins</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/United_States_commemorative_coins" target="_blank" rel="noreferrer">Wikipedia U.S. commemorative coins overview</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/List_of_United_States_commemorative_coins_and_medals_before_1900" target="_blank" rel="noreferrer">Wikipedia commemorative list before 1900</a></li>
+            <li><a href="https://en.wikipedia.org/wiki/List_of_United_States_commemorative_coins_and_medals_(2020s)" target="_blank" rel="noreferrer">Wikipedia commemorative decade lists through the 2020s</a></li>
+          </ul>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="coinDialog">
+      <form id="holdingForm">
+        <div class="dialog-head">
+          <div>
+            <p id="dialogMeta"></p>
+            <h3 id="dialogTitle"></h3>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close" type="button" onclick="document.querySelector('#coinDialog').close()">x</button>
+        </div>
+
+        <section class="holdings-panel">
+          <h4>Saved holdings</h4>
+          <div id="holdingsList"></div>
+        </section>
+
+        <div class="form-grid">
+          <label>
+            Issue year
+            <input id="issueYearInput" placeholder="2024" />
+          </label>
+          <label>
+            Mint mark
+            <input id="mintMarkInput" placeholder="P, D, S, W..." />
+          </label>
+          <label>
+            Quantity
+            <input id="quantityInput" type="number" min="1" step="1" />
+          </label>
+          <label>
+            Grade / condition
+            <input id="gradeInput" placeholder="Circulated, MS65, Proof..." />
+          </label>
+          <label>
+            Album location
+            <input id="locationInput" placeholder="Book 1, page 4, slot B" />
+          </label>
+          <label>
+            Acquired
+            <input id="acquiredAtInput" type="date" />
+          </label>
+          <label class="wide">
+            Notes
+            <textarea id="notesInput" rows="4" placeholder="Where you found it, duplicates, condition notes..."></textarea>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="submit">Add holding</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="customDialog">
+      <form id="customForm" method="dialog">
+        <div class="dialog-head">
+          <div>
+            <p>Custom catalogue item</p>
+            <h3>Add a coin</h3>
+          </div>
+          <button class="icon-button" value="cancel" aria-label="Close" type="submit">x</button>
+        </div>
+
+        <div class="form-grid">
+          <label>
+            Name
+            <input id="customNameInput" required placeholder="1943 Steel Lincoln Cent" />
+          </label>
+          <label>
+            Years
+            <input id="customYearsInput" placeholder="1943" />
+          </label>
+          <label>
+            Denomination
+            <input id="customDenominationInput" required placeholder="Cent" />
+          </label>
+          <label>
+            Program
+            <input id="customProgramInput" placeholder="Regular issue" />
+          </label>
+          <label>
+            Category
+            <input id="customCategoryInput" placeholder="Type coin, commemorative, world coin..." />
+          </label>
+          <label>
+            Source
+            <input id="customSourceInput" placeholder="URL, book, dealer note..." />
+          </label>
+          <label>
+            Obverse image URL
+            <input id="customObverseImageInput" type="url" placeholder="https://..." />
+          </label>
+          <label>
+            Reverse image URL
+            <input id="customReverseImageInput" type="url" placeholder="https://..." />
+          </label>
+          <label class="wide">
+            Notes
+            <textarea id="customDescriptionInput" rows="3" placeholder="Details to help identify it later"></textarea>
+          </label>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="submit" value="default">Add to catalogue</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
