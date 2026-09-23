@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from app import DB_PATH, init_db
+from catalog_reconcile import reconcile_imported_overlaps
 from catalog_seed import slug
 
 
@@ -277,6 +278,9 @@ def main() -> None:
         print(f"{len(page_rows):>3} rows - {url}")
         rows.extend(page_rows)
     print(f"Imported {upsert_rows(rows)} commemorative catalogue rows")
+    with sqlite3.connect(DB_PATH) as db:
+        db.row_factory = sqlite3.Row
+        print(f"Merged {reconcile_imported_overlaps(db)} overlapping imported rows into canonical seed records")
 
 
 if __name__ == "__main__":

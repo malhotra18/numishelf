@@ -11,6 +11,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
+from catalog_reconcile import reconcile_imported_overlaps
 from catalog_seed import build_seed_catalog, slug
 
 
@@ -80,6 +81,7 @@ def init_db() -> None:
         db.executescript(SCHEMA)
         ensure_schema(db)
         seed_catalog(db)
+        reconcile_imported_overlaps(db)
 
 
 def ensure_schema(db: sqlite3.Connection) -> None:
