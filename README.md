@@ -109,6 +109,7 @@ The built-in seed includes:
 - 50 State Quarters
 - DC and U.S. Territories Quarters
 - America the Beautiful Quarters
+- General George Washington Crossing the Delaware Quarter
 - American Women Quarters
 - 2026 Semiquincentennial quarter designs
 - Presidential $1 Coins

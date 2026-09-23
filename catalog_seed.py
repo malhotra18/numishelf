@@ -32,6 +32,7 @@ def slug(value: str) -> str:
 US_MINT_CIRCULATING = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins"
 US_MINT_DOLLARS = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins/dollar-coins"
 US_MINT_ATB = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins/quarter/america-the-beautiful-quarters"
+US_MINT_CROSSING_DELAWARE = "https://www.usmint.gov/news/press-releases/mint-announces-new-quarter-dollar-reverse-design"
 US_MINT_CCCRA = "https://www.usmint.gov/news/inside-the-mint/coin-programs-in-the-circulating-collectible-coin-redesign-act"
 US_MINT_NATIVE_DOLLAR = "https://www.usmint.gov/learn/coins-and-medals/collectible-coins/native-american-dollar-coins"
 US_MINT_INNOVATION = "https://www.usmint.gov/learn/coins-and-medals/collectible-coins/american-innovation-dollar-coins"
@@ -262,6 +263,20 @@ def build_seed_catalog() -> list[CoinSeed]:
             tags=("quarter", site, place, "America the Beautiful"),
         )
         for year, site, place in BEAUTIFUL_QUARTERS
+    )
+
+    coins.append(
+        CoinSeed(
+            id="quarter-crossing-delaware",
+            name="General George Washington Crossing the Delaware Quarter",
+            denomination="Quarter",
+            years="2021",
+            program="Washington Crossing the Delaware",
+            category="Circulating commemorative",
+            description="General Washington commanding his troops through the overnight crossing of the Delaware River before the Battle of Trenton",
+            source=US_MINT_CROSSING_DELAWARE,
+            tags=("quarter", "Washington", "Delaware", "Battle of Trenton", "2021"),
+        )
     )
 
     coins.extend(
