@@ -161,7 +161,10 @@ function renderCard(coin) {
       </div>
       <div class="card-actions">
         <span class="owned-label">${escapeHtml(ownedLine)}</span>
-        <button type="button" class="${coin.owned_quantity > 0 ? "secondary" : ""}" data-edit="${escapeHtml(coin.id)}">${coin.owned_quantity > 0 ? "Manage" : "Add"}</button>
+        <div class="action-buttons">
+          ${coin.owned_quantity > 0 ? "" : `<button type="button" data-quick-add="${escapeHtml(coin.id)}">Add</button>`}
+          <button type="button" class="secondary" data-edit="${escapeHtml(coin.id)}">Manage</button>
+        </div>
       </div>
     </article>
   `;
@@ -272,6 +275,22 @@ async function saveHolding() {
   elements.notesInput.value = "";
 }
 
+async function quickAddHolding(coinId) {
+  const coin = appState.coins.find((item) => item.id === coinId);
+  if (!coin) return;
+
+  await api("/api/collection", {
+    method: "POST",
+    body: JSON.stringify({
+      coin_id: coinId,
+      issue_year: guessFirstYear(coin.years),
+      quantity: 1,
+      notes: "Quick add"
+    })
+  });
+  await loadState();
+}
+
 async function deleteHolding(id) {
   await api(`/api/collection/${id}`, { method: "DELETE" });
   await loadState();
@@ -332,8 +351,14 @@ function escapeHtml(value) {
 }
 
 elements.catalogView.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-edit]");
-  if (button) openCoinDialog(button.dataset.edit);
+  const quickAddButton = event.target.closest("[data-quick-add]");
+  if (quickAddButton) {
+    quickAddHolding(quickAddButton.dataset.quickAdd).catch((error) => alert(error.message));
+    return;
+  }
+
+  const editButton = event.target.closest("[data-edit]");
+  if (editButton) openCoinDialog(editButton.dataset.edit);
 });
 
 elements.holdingsList.addEventListener("click", async (event) => {

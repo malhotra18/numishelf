@@ -353,6 +353,13 @@ textarea {
   justify-content: space-between;
 }
 
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .owned-label {
   color: var(--accent-dark);
   font-size: 13px;
