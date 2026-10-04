@@ -32,6 +32,7 @@ def slug(value: str) -> str:
 US_MINT_CIRCULATING = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins"
 US_MINT_DOLLARS = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins/dollar-coins"
 US_MINT_ATB = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins/quarter/america-the-beautiful-quarters"
+US_MINT_CUMBERLAND_GAP = "https://www.usmint.gov/learn/coins-and-medals/circulating-coins/quarter/america-the-beautiful-quarters/cumberland-gap-national-historical-park"
 US_MINT_CROSSING_DELAWARE = "https://www.usmint.gov/news/press-releases/mint-announces-new-quarter-dollar-reverse-design"
 US_MINT_CCCRA = "https://www.usmint.gov/news/inside-the-mint/coin-programs-in-the-circulating-collectible-coin-redesign-act"
 US_MINT_NATIVE_DOLLAR = "https://www.usmint.gov/learn/coins-and-medals/collectible-coins/native-american-dollar-coins"
@@ -159,6 +160,15 @@ BEAUTIFUL_QUARTERS = [
     (2021, "Tuskegee Airmen", "Alabama"),
 ]
 
+BEAUTIFUL_QUARTER_OVERRIDES = {
+    "Cumberland Gap": {
+        "name": "Cumberland Gap National Historical Park Quarter",
+        "description": "First Doorway to the West design honoring Cumberland Gap National Historical Park in Kentucky",
+        "source": US_MINT_CUMBERLAND_GAP,
+        "tags": ("quarter", "Cumberland Gap", "Kentucky", "America the Beautiful", "First Doorway to the West"),
+    }
+}
+
 AMERICAN_WOMEN_QUARTERS = [
     (2022, "Maya Angelou"), (2022, "Dr. Sally Ride"), (2022, "Wilma Mankiller"), (2022, "Nina Otero-Warren"), (2022, "Anna May Wong"),
     (2023, "Bessie Coleman"), (2023, "Edith Kanakaole"), (2023, "Eleanor Roosevelt"), (2023, "Jovita Idar"), (2023, "Maria Tallchief"),
@@ -253,14 +263,14 @@ def build_seed_catalog() -> list[CoinSeed]:
     coins.extend(
         CoinSeed(
             id=f"quarter-atb-{slug(site)}",
-            name=f"{site} Quarter",
+            name=BEAUTIFUL_QUARTER_OVERRIDES.get(site, {}).get("name", f"{site} Quarter"),
             denomination="Quarter",
             years=str(year),
             program="America the Beautiful Quarters",
             category="Circulating commemorative",
-            description=f"{place} national park or national site design",
-            source=US_MINT_ATB,
-            tags=("quarter", site, place, "America the Beautiful"),
+            description=BEAUTIFUL_QUARTER_OVERRIDES.get(site, {}).get("description", f"{place} national park or national site design"),
+            source=BEAUTIFUL_QUARTER_OVERRIDES.get(site, {}).get("source", US_MINT_ATB),
+            tags=BEAUTIFUL_QUARTER_OVERRIDES.get(site, {}).get("tags", ("quarter", site, place, "America the Beautiful")),
         )
         for year, site, place in BEAUTIFUL_QUARTERS
     )
